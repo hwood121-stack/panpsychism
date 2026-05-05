@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Russellian Monism — An Interactive Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f4efe6;
+    --paper-2: #ebe3d3;
+    --paper-3: #ddd3bf;
+    --rule: #c8bda5;
+    --ink: #1a1612;
+    --ink-2: #3b342c;
+    --muted: #6b6053;
+    --accent: #7a2820;        /* oxblood — Russellian core / panpsychism */
+    --accent-2: #5a6b3a;      /* olive  — panprotopsychism */
+    --accent-3: #8c6a1f;      /* ochre  — objections */
+    --highlight: #f0e4c3;
+    --shadow: 0 1px 0 rgba(26,22,18,0.06), 0 8px 24px -12px rgba(26,22,18,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background-image:
+      radial-gradient(rgba(26,22,18,0.03) 1px, transparent 1px),
+      radial-gradient(rgba(26,22,18,0.02) 1px, transparent 1px);
+    background-size: 4px 4px, 9px 9px;
+    background-position: 0 0, 2px 2px;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 40px 120px;
+  }
+
+  /* ===== Header ===== */
+  header.masthead {
+    border-top: 4px double var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px;
+    margin-bottom: 36px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Fraunces', 'Newsreader', serif;
+    font-weight: 500;
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
+  .dek {
+    font-family: 'Newsreader', serif;
+    font-size: 19px;
+    color: var(--ink-2);
+    max-width: 56ch;
+    margin: 0;
+    font-style: italic;
+  }
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* ===== Tabs ===== */
+  nav.tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 16px 22px 14px;
+    cursor: pointer;
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .tab-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+
+  /* ===== Generic section frame ===== */
+  section.panel { display: none; }
+  section.panel.active { display: block; animation: fade .35s ease; }
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lede {
+    font-family: 'Newsreader', serif;
+    font-size: 18px;
+    color: var(--ink-2);
+    max-width: 70ch;
+    margin: 0 0 36px;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ===== Timeline ===== */
+  .timeline {
+    position: relative;
+    padding-left: 0;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 96px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--rule) 6%, var(--rule) 94%, transparent);
+  }
+  .tl-event {
+    position: relative;
+    padding: 14px 0 14px 130px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .tl-event:hover { background: rgba(122, 40, 32, 0.04); }
+  .tl-event.selected { background: var(--highlight); }
+  .tl-event::before {
+    content: "";
+    position: absolute;
+    left: 92px;
+    top: 24px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    transition: background 0.15s, transform 0.15s;
+  }
+  .tl-event:hover::before, .tl-event.selected::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.2);
+  }
+  .tl-event[data-pivotal="true"]::before {
+    background: var(--ink);
+  }
+  .tl-event[data-pivotal="true"].selected::before {
+    background: var(--accent);
+  }
+  .tl-year {
+    position: absolute;
+    left: 0;
+    top: 18px;
+    width: 80px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: right;
+    font-weight: 500;
+  }
+  .tl-event[data-pivotal="true"] .tl-year { color: var(--accent); }
+  .tl-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.3;
+    margin: 0 0 4px;
+  }
+  .tl-title em { font-style: italic; }
+  .tl-author {
+    font-family: 'Newsreader', serif;
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .tl-tag {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 1px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--paper-3);
+    color: var(--ink-2);
+    border-radius: 2px;
+    vertical-align: 2px;
+  }
+  .tl-tag.pivot { background: var(--accent); color: var(--paper); }
+
+  /* ===== Concept map ===== */
+  .map-shell {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    overflow: auto;
+  }
+  .map-svg { display: block; width: 100%; height: auto; min-height: 560px; }
+  .node-group { cursor: pointer; }
+  .node-group rect, .node-group ellipse {
+    transition: filter 0.18s, stroke-width 0.18s;
+    fill: var(--paper);
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .node-group:hover rect, .node-group:hover ellipse,
+  .node-group.selected rect, .node-group.selected ellipse {
+    filter: drop-shadow(0 4px 0 rgba(26,22,18,0.08));
+    stroke-width: 2.5;
+  }
+  .node-group.kind-root rect { fill: var(--ink); stroke: var(--ink); }
+  .node-group.kind-root text { fill: var(--paper); }
+  .node-group.kind-panpsy rect { fill: #f7e8e6; stroke: var(--accent); }
+  .node-group.kind-panpsy text.title { fill: var(--accent); }
+  .node-group.kind-panproto rect { fill: #ecefdf; stroke: var(--accent-2); }
+  .node-group.kind-panproto text.title { fill: var(--accent-2); }
+  .node-group.kind-objection rect { fill: #f4ead0; stroke: var(--accent-3); }
+  .node-group.kind-objection text.title { fill: var(--accent-3); }
+  .node-group.selected rect, .node-group.selected ellipse {
+    filter: drop-shadow(0 0 0 2px var(--accent)) drop-shadow(0 4px 0 rgba(26,22,18,0.08));
+  }
+  .node-group text {
+    font-family: 'Fraunces', serif;
+    pointer-events: none;
+    user-select: none;
+  }
+  .node-group text.title { font-weight: 600; font-size: 14px; }
+  .node-group text.sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    fill: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .edge {
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 1.2;
+  }
+  .edge.dashed { stroke-dasharray: 4 4; }
+  .edge.objection { stroke: var(--accent-3); }
+  .edge-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .legend-swatch {
+    display: inline-block;
+    width: 14px; height: 10px;
+    margin-right: 7px;
+    vertical-align: -1px;
+    border: 1.5px solid;
+  }
+  .sw-root { background: var(--ink); border-color: var(--ink); }
+  .sw-pan { background: #f7e8e6; border-color: var(--accent); }
+  .sw-proto { background: #ecefdf; border-color: var(--accent-2); }
+  .sw-obj { background: #f4ead0; border-color: var(--accent-3); }
+
+  /* ===== Compare ===== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr;
+    border: 1px solid var(--rule);
+    background: var(--paper-2);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .cmp-cell {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .cmp-cell:nth-child(3n) { border-right: none; }
+  .compare-grid > div:nth-last-child(-n+3) { border-bottom: none; }
+  .cmp-row-label {
+    background: var(--paper-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .cmp-head {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .cmp-head.pan { background: var(--accent); }
+  .cmp-head.proto { background: var(--accent-2); }
+  .cmp-head .greek {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    opacity: 0.75;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  /* ===== Detail panel ===== */
+  .detail {
+    margin-top: 36px;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 24px 28px;
+    border-radius: 2px;
+    min-height: 120px;
+    box-shadow: var(--shadow);
+  }
+  .detail .placeholder {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    color: var(--muted);
+    margin: 0;
+  }
+  .detail .d-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .detail h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 0 4px;
+  }
+  .detail h3 em { font-style: italic; }
+  .detail .d-author {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+  }
+  .detail p { margin: 0 0 12px; }
+  .detail .d-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 18px;
+    margin-bottom: 6px;
+    border-top: 1px dotted var(--rule);
+    padding-top: 12px;
+  }
+  .detail ul {
+    margin: 0; padding-left: 20px;
+    font-size: 15px;
+  }
+  .detail ul li { margin-bottom: 4px; }
+  .detail .d-tags {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .d-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    background: var(--paper-3);
+    color: var(--ink-2);
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+  footer .figure {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-2);
+    text-transform: none;
+    letter-spacing: 0;
+    max-width: 60ch;
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 760px) {
+    .wrap { padding: 32px 22px 80px; }
+    header.masthead { grid-template-columns: 1fr; }
+    .meta { text-align: left; }
+    .timeline::before { left: 60px; }
+    .tl-event { padding-left: 90px; }
+    .tl-event::before { left: 56px; }
+    .tl-year { width: 50px; font-size: 12px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .cmp-cell { border-right: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ====== MASTHEAD ====== -->
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">An interactive cartography</div>
+      <h1>Russellian <em>Monism</em></h1>
+      <p class="dek">A view that physics describes the structure of the world but not its intrinsic nature, leaving consciousness — or its precursors — to fill the gap.</p>
+    </div>
+    <div class="meta">
+      Three views<br>
+      One timeline · One map<br>
+      One unfinished argument
+    </div>
+  </header>
+
+  <!-- ====== TABS ====== -->
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="timeline"><span class="tab-num">01</span>Timeline</button>
+    <button class="tab-btn" data-tab="map"><span class="tab-num">02</span>Concept Map</button>
+    <button class="tab-btn" data-tab="compare"><span class="tab-num">03</span>Panpsychism · Panprotopsychism</button>
+  </nav>
+
+  <!-- ====== TIMELINE ====== -->
+  <section class="panel active" id="panel-timeline">
+    <p class="lede">
+      Russellian monism descends from a structural argument about physics, sharpens against the <strong>hard problem</strong>, and bifurcates into two competing answers about what the intrinsic nature of matter must be like. The events below mark its development as a serious metaphysical position.
+    </p>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <!-- ====== MAP ====== -->
+  <section class="panel" id="panel-map">
+    <p class="lede">
+      The map shows how the central thesis — physics is structural — opens space for two answers: <strong style="color:var(--accent)">panpsychism</strong> populates the world with microphenomenal properties; <strong style="color:var(--accent-2)">panprotopsychism</strong> with protophenomenal ones. Each inherits its own version of the explanatory burden.
+    </p>
+    <div class="map-shell">
+      <svg class="map-svg" viewBox="0 0 1000 620" id="conceptMap" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#3b342c" />
+          </marker>
+          <marker id="arrow-obj" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#8c6a1f" />
+          </marker>
+        </defs>
+
+        <!-- Edges -->
+        <path class="edge" d="M 500 110 L 500 175" marker-end="url(#arrow)" />
+        <path class="edge" d="M 500 240 C 500 280, 280 270, 280 305" marker-end="url(#arrow)" />
+        <path class="edge" d="M 500 240 C 500 280, 720 270, 720 305" marker-end="url(#arrow)" />
+        <path class="edge" d="M 280 365 L 280 425" marker-end="url(#arrow)" />
+        <path class="edge" d="M 720 365 L 720 425" marker-end="url(#arrow)" />
+        <path class="edge dashed objection" d="M 200 470 C 130 470, 130 340, 200 335" marker-end="url(#arrow-obj)" />
+        <path class="edge dashed objection" d="M 800 470 C 870 470, 870 340, 800 335" marker-end="url(#arrow-obj)" />
+        <!-- Hard problem feed -->
+        <path class="edge dashed" d="M 175 110 C 230 110, 360 130, 440 175" marker-end="url(#arrow)" />
+
+        <text class="edge-label" x="320" y="265" text-anchor="middle">if intrinsic = phenomenal</text>
+        <text class="edge-label" x="680" y="265" text-anchor="middle">if intrinsic = protophenomenal</text>
+        <text class="edge-label" x="100" y="395" text-anchor="middle" fill="#8c6a1f">objection</text>
+        <text class="edge-label" x="900" y="395" text-anchor="middle" fill="#8c6a1f">objection</text>
+
+        <!-- Hard problem (motivator) -->
+        <g class="node-group kind-objection" data-id="hard-problem">
+          <rect x="50" y="80" width="240" height="60" rx="3" />
+          <text class="title" x="170" y="106" text-anchor="middle">The Hard Problem</text>
+          <text class="sub" x="170" y="124" text-anchor="middle">Chalmers · 1995</text>
+        </g>
+
+        <!-- Russellian Monism (root) -->
+        <g class="node-group kind-root" data-id="russellian-monism">
+          <rect x="370" y="50" width="260" height="64" rx="4" />
+          <text class="title" x="500" y="78" text-anchor="middle">Russellian Monism</text>
+          <text class="sub" x="500" y="98" text-anchor="middle" fill="#c8bda5">Russell · 1927 · Eddington · 1928</text>
+        </g>
+
+        <!-- Structuralism about physics -->
+        <g class="node-group" data-id="structuralism">
+          <rect x="370" y="180" width="260" height="60" rx="3" />
+          <text class="title" x="500" y="206" text-anchor="middle">Structuralism about Physics</text>
+          <text class="sub" x="500" y="224" text-anchor="middle">physics gives relations, not natures</text>
+        </g>
+
+        <!-- Panpsychism -->
+        <g class="node-group kind-panpsy" data-id="panpsychism">
+          <rect x="150" y="305" width="260" height="60" rx="3" />
+          <text class="title" x="280" y="331" text-anchor="middle">Panpsychism</text>
+          <text class="sub" x="280" y="349" text-anchor="middle">microphenomenal intrinsic properties</text>
+        </g>
+
+        <!-- Panprotopsychism -->
+        <g class="node-group kind-panproto" data-id="panprotopsychism">
+          <rect x="590" y="305" width="260" height="60" rx="3" />
+          <text class="title" x="720" y="331" text-anchor="middle">Panprotopsychism</text>
+          <text class="sub" x="720" y="349" text-anchor="middle">protophenomenal intrinsic properties</text>
+        </g>
+
+        <!-- Combination problem -->
+        <g class="node-group kind-objection" data-id="combination-problem">
+          <rect x="150" y="425" width="260" height="60" rx="3" />
+          <text class="title" x="280" y="451" text-anchor="middle">The Combination Problem</text>
+          <text class="sub" x="280" y="469" text-anchor="middle">how do micro-subjects sum?</text>
+        </g>
+
+        <!-- Constitution problem (panproto's burden) -->
+        <g class="node-group kind-objection" data-id="constitution-problem">
+          <rect x="590" y="425" width="260" height="60" rx="3" />
+          <text class="title" x="720" y="451" text-anchor="middle">The Reappearing Hard Problem</text>
+          <text class="sub" x="720" y="469" text-anchor="middle">why do protos give rise to phenomenal?</text>
+        </g>
+
+        <!-- Sub-problems / alternatives row -->
+        <g class="node-group kind-objection" data-id="subject-summing">
+          <rect x="50" y="525" width="180" height="50" rx="3" />
+          <text class="title" x="140" y="548" text-anchor="middle" style="font-size:13px">Subject-Summing</text>
+          <text class="sub" x="140" y="564" text-anchor="middle">James · 1890</text>
+        </g>
+        <g class="node-group kind-objection" data-id="palette-problem">
+          <rect x="245" y="525" width="180" height="50" rx="3" />
+          <text class="title" x="335" y="548" text-anchor="middle" style="font-size:13px">Palette Problem</text>
+          <text class="sub" x="335" y="564" text-anchor="middle">Chalmers</text>
+        </g>
+        <g class="node-group kind-panproto" data-id="cosmopsychism">
+          <rect x="590" y="525" width="260" height="50" rx="3" />
+          <text class="title" x="720" y="548" text-anchor="middle" style="font-size:13px">Cosmopsychism</text>
+          <text class="sub" x="720" y="564" text-anchor="middle">one universal subject · Goff · Mathews</text>
+        </g>
+
+        <!-- Edges from combination problem to sub-problems -->
+        <path class="edge dashed objection" d="M 220 485 L 160 525" />
+        <path class="edge dashed objection" d="M 320 485 L 330 525" />
+        <!-- Edge from panpsychism to cosmopsychism -->
+        <path class="edge dashed" d="M 410 350 C 500 470, 600 510, 690 525" marker-end="url(#arrow)" />
+      </svg>
+
+      <div class="legend">
+        <span><span class="legend-swatch sw-root"></span>Foundational thesis</span>
+        <span><span class="legend-swatch sw-pan"></span>Panpsychist branch</span>
+        <span><span class="legend-swatch sw-proto"></span>Panprotopsychist branch</span>
+        <span><span class="legend-swatch sw-obj"></span>Objection / problem</span>
+        <span style="color:var(--ink-2)">— solid: derivation · - - dashed: motivation or critique</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== COMPARE ====== -->
+  <section class="panel" id="panel-compare">
+    <p class="lede">
+      Both views accept Russell's structuralism: physics describes how things relate, not what they are. They diverge on what fills the gap. The choice is often presented as a trade — each side accepts a different cost.
+    </p>
+    <div class="compare-grid">
+      <div class="cmp-cell cmp-row-label" style="background:#1a1612;color:var(--paper);border-right-color:#1a1612"></div>
+      <div class="cmp-head pan">Panpsychism<span class="greek">μικρο · phenomenal</span></div>
+      <div class="cmp-head proto">Panprotopsychism<span class="greek">πρωτο · phenomenal</span></div>
+
+      <div class="cmp-cell cmp-row-label">Intrinsic property</div>
+      <div class="cmp-cell">The categorical bases of physical structure are themselves <strong>microphenomenal</strong> — tiny, primitive instances of experience.</div>
+      <div class="cmp-cell">The categorical bases are <strong>protophenomenal</strong> — not themselves phenomenal but constitutionally apt to ground phenomenal properties when arranged.</div>
+
+      <div class="cmp-cell cmp-row-label">Fundamental ontology</div>
+      <div class="cmp-cell">Experience is fundamental and ubiquitous. Electrons have something it is like to be them, however dim.</div>
+      <div class="cmp-cell">Experience is not fundamental. The fundamental properties are unknown but suited, by their nature, to give rise to phenomenal properties.</div>
+
+      <div class="cmp-cell cmp-row-label">Closes the explanatory gap?</div>
+      <div class="cmp-cell">Yes, if combination works: macro-experience is constituted by the right arrangement of micro-experiences.</div>
+      <div class="cmp-cell">Promissory. The protophenomenal-to-phenomenal step must do explanatory work that the position itself does not yet specify.</div>
+
+      <div class="cmp-cell cmp-row-label">Principal objection</div>
+      <div class="cmp-cell">The <strong>combination problem</strong> in its many forms: subject-summing, palette, structural mismatch, quality combination.</div>
+      <div class="cmp-cell">A version of the hard problem reasserts itself: why should non-phenomenal properties, however structured, yield phenomenal ones at all?</div>
+
+      <div class="cmp-cell cmp-row-label">Cost</div>
+      <div class="cmp-cell">Counterintuitive ontology (experience everywhere) plus the unresolved combination question.</div>
+      <div class="cmp-cell">Less ontologically lavish but less explanatory. The "proto-" does heavy lifting it is not yet built to do.</div>
+
+      <div class="cmp-cell cmp-row-label">Representative proponents</div>
+      <div class="cmp-cell">Galen Strawson, Philip Goff, Hedda Hassel Mørch, Luke Roelofs (constitutive variants); William James (early sympathizer).</div>
+      <div class="cmp-cell">Daniel Stoljar, Derk Pereboom; Chalmers presents both as live options without endorsing either.</div>
+
+      <div class="cmp-cell cmp-row-label">Key works</div>
+      <div class="cmp-cell"><em>Realistic Monism</em> (Strawson, 2006); <em>Consciousness and Fundamental Reality</em> (Goff, 2017); <em>Combining Minds</em> (Roelofs, 2019).</div>
+      <div class="cmp-cell">"Two Conceptions of the Physical" (Stoljar, 2001); <em>Consciousness and the Prospects of Physicalism</em> (Pereboom, 2011).</div>
+    </div>
+  </section>
+
+  <!-- ====== DETAIL PANEL ====== -->
+  <div class="detail" id="detail">
+    <p class="placeholder">Select an event on the timeline or a node on the map for context.</p>
+  </div>
+
+  <footer>
+    <p class="figure">A note on scope: Russellian monism is a family of positions, not a single thesis. The map and table simplify a literature in which constitutive, emergentist, smallist, and priority versions all matter. Treat this as orientation, not census.</p>
+    Sources drawn on: Russell · Eddington · Maxwell · Lockwood · Chalmers · Strawson · Goff · Stoljar · Pereboom · Coleman · Roelofs · Mørch · James
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+
+const TIMELINE = [
+  {
+    id: "james-1890",
+    year: "1890",
+    title: "<em>The Principles of Psychology</em>",
+    author: "William James",
+    pivotal: false,
+    eyebrow: "Pre-history of the combination problem",
+    summary: "James argues that minds do not sum. A row of separate feelings does not, by sitting next to itself, add up to a single experience of the row. The argument predates Russell but supplies the question contemporary panpsychists have inherited.",
+    sections: [
+      {label: "Why it matters", body: "The earliest sustained statement of what is now called the subject-summing problem. Modern panpsychism still faces this objection in essentially the form James gave it."}
+    ],
+    tags: ["Combination problem", "Panpsychism prehistory"]
+  },
+  {
+    id: "russell-1927",
+    year: "1927",
+    title: "<em>The Analysis of Matter</em>",
+    author: "Bertrand Russell",
+    pivotal: true,
+    eyebrow: "Founding text",
+    summary: "Russell argues that physics gives an exhaustive account of the structural and relational features of matter and a complete blank about its intrinsic nature. The vacancy is not a defect of physics; it is what physics is for. Whatever fills the role left empty is what the world ultimately is.",
+    sections: [
+      {label: "The core move", body: "Mass, charge, spin, and the rest are characterized only by what they do. Physics never says what they are in themselves. Something must occupy the categorical role; physics cannot tell us what it is."},
+      {label: "Why it founds the position", body: "Once you accept the structural reading of physics, an opening appears for consciousness or its precursors to be the missing intrinsic nature."}
+    ],
+    tags: ["Founding text", "Structuralism"]
+  },
+  {
+    id: "eddington-1928",
+    year: "1928",
+    title: "<em>The Nature of the Physical World</em>",
+    author: "Arthur Eddington",
+    pivotal: false,
+    eyebrow: "Independent parallel",
+    summary: "Eddington reaches a closely related conclusion from the side of physics. He explicitly suggests that the only intrinsic nature we are directly acquainted with is the one we find in our own minds, and that this provides our best clue to what fills the structural skeleton.",
+    sections: [
+      {label: "Significance", body: "The position emerges twice in two years from independent directions. The convergence gives it more force than either argument alone."}
+    ],
+    tags: ["Convergent argument"]
+  },
+  {
+    id: "maxwell-1978",
+    year: "1978",
+    title: "Rigid Designators and Mind-Brain Identity",
+    author: "Grover Maxwell",
+    pivotal: false,
+    eyebrow: "Mid-century revival",
+    summary: "After half a century of dormancy, Maxwell reintroduces the structural argument into analytic philosophy of mind. He uses it to defend a form of mind-brain identity: phenomenal properties are the intrinsic categorical bases of brain processes.",
+    sections: [
+      {label: "Why it matters", body: "Maxwell connects Russell's structural argument to the live debates about identity theory, making it a candidate solution rather than a historical curiosity."}
+    ],
+    tags: ["Revival"]
+  },
+  {
+    id: "lockwood-1989",
+    year: "1989",
+    title: "<em>Mind, Brain and the Quantum</em>",
+    author: "Michael Lockwood",
+    pivotal: false,
+    eyebrow: "Systematic development",
+    summary: "Lockwood develops a Russellian framework with explicit attention to quantum mechanics, arguing that phenomenal properties are intrinsic features of brain states whose extrinsic structural features physics describes.",
+    sections: [
+      {label: "Contribution", body: "First book-length systematic Russellian treatment in the analytic tradition. Sets terms later authors inherit."}
+    ],
+    tags: ["Quantum approach"]
+  },
+  {
+    id: "chalmers-1995",
+    year: "1995",
+    title: "Facing Up to the Problem of Consciousness",
+    author: "David Chalmers",
+    pivotal: true,
+    eyebrow: "The framing problem",
+    summary: "Chalmers articulates the hard problem: explaining why physical processes give rise to subjective experience at all. Russellian monism becomes important precisely because it offers a structural diagnosis of why the gap is so resistant.",
+    sections: [
+      {label: "Why pivotal", body: "Russellian monism is most often defended now as the best response to the hard problem. The 1995 paper is the version of the problem that everyone after responds to."}
+    ],
+    tags: ["Hard problem", "Pivotal"]
+  },
+  {
+    id: "chalmers-1996",
+    year: "1996",
+    title: "<em>The Conscious Mind</em>",
+    author: "David Chalmers",
+    pivotal: false,
+    eyebrow: "Book-length argument",
+    summary: "Chalmers's full argument against materialism, with sustained attention to what would be required of any view that takes consciousness seriously. Russellian options surface as the most promising avenue if a thoroughgoing dualism is to be avoided.",
+    sections: [
+      {label: "Significance", body: "Sets the menu of positions on which subsequent debate operates: type-A and type-B materialism, type-D and type-E dualism, type-F (Russellian) monism."}
+    ],
+    tags: ["Foundational text"]
+  },
+  {
+    id: "stoljar-2001",
+    year: "2001",
+    title: "Two Conceptions of the Physical",
+    author: "Daniel Stoljar",
+    pivotal: false,
+    eyebrow: "Panprotopsychism formalized",
+    summary: "Stoljar distinguishes a theoretical conception of the physical (whatever physics describes) from an object-based one (whatever has the intrinsic nature of paradigm physical objects). The argument paves the way for a panprotopsychist position that is physicalist in the second sense without committing to phenomenal properties at the fundamental level.",
+    sections: [
+      {label: "Contribution", body: "Provides the cleanest articulation of why one might want intrinsic properties that ground experience without being experience."}
+    ],
+    tags: ["Panprotopsychism"]
+  },
+  {
+    id: "strawson-2006",
+    year: "2006",
+    title: "Realistic Monism: Why Physicalism Entails Panpsychism",
+    author: "Galen Strawson",
+    pivotal: true,
+    eyebrow: "Panpsychism returns",
+    summary: "Strawson argues that any genuine physicalism must hold that experience is itself physical, and that the only way to avoid radical emergence is to grant experience all the way down. The paper is provocative in tone and serious in argument.",
+    sections: [
+      {label: "Why pivotal", body: "Reopens panpsychism as a respectable analytic position. Subsequent literature, friendly and hostile, takes Strawson's argument as the point of departure."}
+    ],
+    tags: ["Panpsychism", "Pivotal"]
+  },
+  {
+    id: "chalmers-2013",
+    year: "2013–15",
+    title: "Panpsychism and Panprotopsychism",
+    author: "David Chalmers",
+    pivotal: true,
+    eyebrow: "The distinction articulated",
+    summary: "Chalmers gives the most careful articulation of the panpsychism / panprotopsychism distinction within the Russellian framework, and lays out the central objections each must answer — pre-eminently the combination problem on the panpsychist side.",
+    sections: [
+      {label: "Why pivotal", body: "After this paper, the field talks about Russellian monism in the vocabulary Chalmers establishes here. The combination problem becomes the central technical question for panpsychists."},
+      {label: "Chalmers's stance", body: "Officially neutral between panpsychism and panprotopsychism; presents both as live options whose viability turns on whether their respective burdens can be met."}
+    ],
+    tags: ["Distinction articulated", "Pivotal"]
+  },
+  {
+    id: "goff-2017",
+    year: "2017",
+    title: "<em>Consciousness and Fundamental Reality</em>",
+    author: "Philip Goff",
+    pivotal: false,
+    eyebrow: "Systematic panpsychism",
+    summary: "Goff argues that panpsychist Russellian monism is the most defensible response to the hard problem and engages directly with the combination problem, defending what he calls a constitutive panpsychism while gesturing toward cosmopsychism as a way around the combination challenge.",
+    sections: [
+      {label: "Contribution", body: "Sustained book-length defense; develops cosmopsychism (the universe as one experiencing subject, with our minds as derivative) as a fallback position."}
+    ],
+    tags: ["Constitutive panpsychism", "Cosmopsychism"]
+  },
+  {
+    id: "roelofs-2019",
+    year: "2019",
+    title: "<em>Combining Minds</em>",
+    author: "Luke Roelofs",
+    pivotal: false,
+    eyebrow: "The combination problem, head-on",
+    summary: "Roelofs offers the most systematic response to the combination problem to date, defending the coherence of panpsychist composition by carefully diagnosing where the intuitive resistance comes from and what would be required to overcome it.",
+    sections: [
+      {label: "Significance", body: "Marks the point at which the combination problem stops being treated as decisive against panpsychism and becomes an open technical question."}
+    ],
+    tags: ["Combination problem"]
+  }
+];
+
+const NODES = {
+  "russellian-monism": {
+    title: "Russellian Monism",
+    eyebrow: "Foundational thesis",
+    summary: "The view that physics describes only the structural and relational properties of the world, leaving its intrinsic categorical nature unspecified, and that consciousness or its precursors fill that gap.",
+    sections: [
+      {label: "Core thesis", body: "Two claims joined: (1) physics is structural; (2) the intrinsic nature of physical reality is or grounds the phenomenal."},
+      {label: "Why \"monism\"", body: "It is monist because it holds that the physical and the phenomenal are not two distinct kinds — the phenomenal (or its precursor) is what the physical structure is the structure of."},
+      {label: "Why \"Russellian\"", body: "Russell's argument in The Analysis of Matter (1927) is the locus classicus for the structural reading of physics on which the position rests."}
+    ],
+    tags: ["Founding view", "Russell 1927"]
+  },
+  "structuralism": {
+    title: "Structuralism about Physics",
+    eyebrow: "Supporting thesis",
+    summary: "Physics characterizes its subject matter only in terms of relations and dispositions. Mass is what attracts; charge is what repels other charges. Physics does not say what mass or charge are in themselves.",
+    sections: [
+      {label: "Why it matters", body: "If physics is exhaustively structural, it leaves an explanatory vacancy: something must occupy the structural roles. Russellian monism proposes that consciousness or its precursors are what occupies them."},
+      {label: "Critics", body: "Some philosophers reject the structuralist reading and hold that physics gives a complete account, including intrinsic nature. Russellian monism stands or falls partly with this debate."}
+    ],
+    tags: ["Russell", "Newman's objection"]
+  },
+  "panpsychism": {
+    title: "Panpsychism (Russellian)",
+    eyebrow: "First branch",
+    summary: "The intrinsic categorical bases of physical structure are microphenomenal — fundamental instances of phenomenal property at the smallest scale. Macrophenomenal experiences are constituted by the right arrangement of these microphenomenal properties.",
+    sections: [
+      {label: "Why hold it", body: "It avoids both radical emergence (consciousness appearing where nothing of its kind was before) and the dualist's problem of how a non-physical mind interacts with a physical brain."},
+      {label: "Principal cost", body: "The combination problem: it is unclear how micro-experiences sum into the unified macro-experience of a human subject."},
+      {label: "Variants", body: "Constitutive panpsychism (the standard form); emergentist panpsychism (rejected by most as conceding too much); cosmopsychism (the universe as one fundamental subject)."}
+    ],
+    tags: ["Microphenomenal", "Constitutive view", "Strawson · Goff"]
+  },
+  "panprotopsychism": {
+    title: "Panprotopsychism",
+    eyebrow: "Second branch",
+    summary: "The intrinsic categorical bases are protophenomenal — not themselves phenomenal but of a kind that constitutes phenomenal properties when suitably arranged. The position keeps the structural argument's promise without locating experience at the fundamental level.",
+    sections: [
+      {label: "Why hold it", body: "It avoids the counterintuitive claim that electrons have inner lives. It preserves a thin physicalism by making the intrinsic properties non-mental in themselves."},
+      {label: "Principal cost", body: "The hard problem reasserts itself in a new form. If protophenomenal properties are not themselves phenomenal, why should arranging them yield phenomenal properties at all? The position promises an explanation it has not yet supplied."},
+      {label: "Status", body: "Often presented as a more conservative cousin of panpsychism. Chalmers gives both as live options. Stoljar and Pereboom have developed positions in this neighbourhood."}
+    ],
+    tags: ["Protophenomenal", "Stoljar · Pereboom"]
+  },
+  "hard-problem": {
+    title: "The Hard Problem of Consciousness",
+    eyebrow: "Motivating problem",
+    summary: "The problem of explaining why physical processes give rise to subjective experience at all — and why they give rise to this experience rather than another or none. Distinguished by Chalmers from the easy problems, which concern function.",
+    sections: [
+      {label: "Role for Russellian monism", body: "The hard problem motivates Russellian monism as a structural diagnosis: the gap between physical description and phenomenal experience is genuine because physics is structural and experience is what fills the structural role."}
+    ],
+    tags: ["Chalmers 1995"]
+  },
+  "combination-problem": {
+    title: "The Combination Problem",
+    eyebrow: "Panpsychism's central burden",
+    summary: "How do microphenomenal properties combine into the unified macrophenomenal experience of a subject? The problem comes in several forms, no one of which has a settled solution.",
+    sections: [
+      {label: "Sub-problems", body: "Subject-summing (how do many subjects compose one?); palette problem (how do limited microqualities yield rich human qualities?); structural mismatch (how do micro-arrangements map onto experiential structure?); quality combination (how do microqualities blend into macroqualities?)."},
+      {label: "Significance", body: "If panpsychism cannot answer it, the position fails. If it can, panpsychism is a serious contender for the best metaphysics of mind. Roelofs (2019) is the most sustained recent response."}
+    ],
+    tags: ["James 1890", "Coleman", "Chalmers · Roelofs"]
+  },
+  "constitution-problem": {
+    title: "The Reappearing Hard Problem",
+    eyebrow: "Panprotopsychism's burden",
+    summary: "If protophenomenal properties are not themselves phenomenal, what makes them apt to constitute phenomenal properties? The original gap between structure and experience reappears as a gap between protophenomenal and phenomenal.",
+    sections: [
+      {label: "The worry", body: "Protophenomenal properties are introduced precisely because their nature would explain phenomenal consciousness. But the position has yet to specify what makes a property protophenomenal rather than merely physical, and the difference threatens to be the very difference the view was supposed to explain."},
+      {label: "Defenses", body: "Proponents argue that the demand is unfair — we cannot specify the intrinsic nature of physical properties either, but we still rely on physics. Critics reply that this is precisely what makes the position promissory."}
+    ],
+    tags: ["Promissory note"]
+  },
+  "subject-summing": {
+    title: "Subject-Summing",
+    eyebrow: "Combination sub-problem",
+    summary: "Can many small subjects of experience compose a single larger subject? William James argued in 1890 that they cannot — minds, unlike physical objects, do not aggregate. The objection survives every reformulation of panpsychism.",
+    sections: [
+      {label: "James's original", body: "A row of feelings, each contained in its own mind, does not by mere proximity compose a feeling of the row. Some new fact would have to obtain, and its obtaining would just be the fact panpsychism was supposed to explain."}
+    ],
+    tags: ["James 1890"]
+  },
+  "palette-problem": {
+    title: "The Palette Problem",
+    eyebrow: "Combination sub-problem",
+    summary: "If only a limited set of microphenomenal qualities exist at the fundamental level, how can they combine to yield the apparently unlimited richness of human phenomenal experience — every shade of color, every nuance of taste, every flavor of mood?",
+    sections: [
+      {label: "Why hard", body: "Color mixing in physics works because colors are reducible to wavelength combinations. Phenomenal qualities resist any obvious analogue. The view needs a story about how a limited palette yields unlimited variety, and no compelling story has emerged."}
+    ],
+    tags: ["Chalmers"]
+  },
+  "cosmopsychism": {
+    title: "Cosmopsychism",
+    eyebrow: "Panpsychist alternative",
+    summary: "Rather than starting with many micro-subjects and asking how they combine, cosmopsychism starts with one universal subject — the cosmos — and asks how individual subjects derive from it. The strategy reverses the direction of explanation.",
+    sections: [
+      {label: "Why consider it", body: "If the combination problem is fatal to bottom-up panpsychism, perhaps top-down panpsychism faces a more tractable decombination problem. Goff and Mathews have developed versions."},
+      {label: "New burdens", body: "The decombination problem may be no easier than combination, and the position requires a metaphysics of priority on which the cosmos is fundamental and individual minds are dependent."}
+    ],
+    tags: ["Goff", "Mathews", "Decombination problem"]
+  }
+};
+
+/* ============================================================
+   RENDER TIMELINE
+============================================================ */
+const tlContainer = document.getElementById("timeline");
+TIMELINE.forEach(ev => {
+  const el = document.createElement("div");
+  el.className = "tl-event";
+  el.dataset.id = ev.id;
+  el.dataset.pivotal = ev.pivotal ? "true" : "false";
+  el.innerHTML = `
+    <div class="tl-year">${ev.year}</div>
+    <div class="tl-title">${ev.title}${ev.pivotal ? '<span class="tl-tag pivot">pivotal</span>' : ''}</div>
+    <div class="tl-author">${ev.author}</div>
+  `;
+  el.addEventListener("click", () => selectTimeline(ev.id));
+  tlContainer.appendChild(el);
+});
+
+/* ============================================================
+   TABS
+============================================================ */
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+  });
+});
+
+/* ============================================================
+   DETAIL PANEL
+============================================================ */
+const detail = document.getElementById("detail");
+
+function renderDetail(d) {
+  let html = "";
+  if (d.eyebrow) html += `<div class="d-eyebrow">${d.eyebrow}</div>`;
+  html += `<h3>${d.title}</h3>`;
+  if (d.author) html += `<div class="d-author">${d.author}${d.year ? ` · ${d.year}` : ''}</div>`;
+  if (d.summary) html += `<p>${d.summary}</p>`;
+  if (d.sections) {
+    d.sections.forEach(s => {
+      html += `<div class="d-section">${s.label}</div><p>${s.body}</p>`;
+    });
+  }
+  if (d.tags && d.tags.length) {
+    html += `<div class="d-tags">` +
+      d.tags.map(t => `<span class="d-tag">${t}</span>`).join('') +
+      `</div>`;
+  }
+  detail.innerHTML = html;
+  detail.scrollIntoView({behavior: "smooth", block: "nearest"});
+}
+
+function selectTimeline(id) {
+  document.querySelectorAll(".tl-event").forEach(e => e.classList.remove("selected"));
+  document.querySelector(`.tl-event[data-id="${id}"]`).classList.add("selected");
+  document.querySelectorAll(".node-group").forEach(n => n.classList.remove("selected"));
+  const ev = TIMELINE.find(e => e.id === id);
+  renderDetail(ev);
+}
+
+function selectNode(id) {
+  document.querySelectorAll(".node-group").forEach(n => n.classList.remove("selected"));
+  const node = document.querySelector(`.node-group[data-id="${id}"]`);
+  if (node) node.classList.add("selected");
+  document.querySelectorAll(".tl-event").forEach(e => e.classList.remove("selected"));
+  const data = NODES[id];
+  if (data) renderDetail(data);
+}
+
+document.querySelectorAll(".node-group").forEach(g => {
+  g.addEventListener("click", () => selectNode(g.dataset.id));
+});
+
+// Open with Russell as the default detail content so the page is never dead
+selectTimeline("russell-1927");
+</script>
+</body>
+</html>
